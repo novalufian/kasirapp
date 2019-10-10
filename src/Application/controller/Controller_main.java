@@ -2,6 +2,7 @@ package Application.controller;
 
 import Application.conectify.ConnectionClass;
 import Application.libs.Error_template;
+import Application.libs.Global_share_variable;
 import Application.model.Model_cart_barang;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -27,7 +28,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Controller_main implements Initializable {
 
-    private static ObservableList<Model_cart_barang> cart = FXCollections.observableArrayList();
     private static ConnectionClass connectionClass = new ConnectionClass();
     private static Connection connection = connectionClass.getConnection();
 
@@ -121,8 +121,9 @@ public class Controller_main implements Initializable {
                 int b = Integer.valueOf(jumlahItem.getText());
                 int i = a * b;
 
-                cart.add(new Model_cart_barang(
-                        cart.size() + 1,
+                Global_share_variable.setCart(
+                    new Model_cart_barang(
+                        Global_share_variable.getCart().size() + 1,
                         rs.getString("id_barang"),
                         rs.getString("kode_barang"),
                         rs.getString("nama_barang"),
@@ -132,7 +133,8 @@ public class Controller_main implements Initializable {
                         satuanItem.getValue(),
                         i,
                         new Button("delete")
-                ));
+                    )
+                );
 
             }
 
@@ -140,6 +142,8 @@ public class Controller_main implements Initializable {
             error_template.error(e);
             e.printStackTrace();
         }
+
+        System.out.println(Global_share_variable.getCart());
     }
 
     @FXML
@@ -151,14 +155,14 @@ public class Controller_main implements Initializable {
 
             AtomicReference<Boolean> isItemonCart = new AtomicReference<>(false);
 
-            cart.forEach(item ->{
+            Global_share_variable.getCart().forEach(item ->{
                 if(kodeBarang.getText().equals(item.getKode())){
                     item.setJumlah(item.getJumlah() + Integer.parseInt(jumlahItem.getText()));
                     item.setTotalharga(item.getJumlah() * item.getHarga());
                     isItemonCart.set(true);
                     System.out.println(item.getJumlah());
 
-                    cart.set(cart.indexOf(item), item);
+                    Global_share_variable.updateValueCart(Global_share_variable.getCart().indexOf(item), item);
                 }
             });
 
@@ -197,10 +201,10 @@ public class Controller_main implements Initializable {
     }
 
     private void generateTableData(){
-        tableCartBarang.setItems(cart);
+        tableCartBarang.setItems(Global_share_variable.getCart());
 
         AtomicReference<Integer> totalBelanja = new AtomicReference<>(0);
-        cart.forEach(item -> {
+        Global_share_variable.getCart().forEach(item -> {
             totalBelanja.updateAndGet(v -> v + item.getTotalharga());
         });
 
@@ -225,7 +229,7 @@ public class Controller_main implements Initializable {
         kodeBarang.requestFocus();
         jumlahItem.setText("");
 
-        cart.removeAll();
+        Global_share_variable.clearCart();
 
     }
 
@@ -267,8 +271,7 @@ public class Controller_main implements Initializable {
                                         Model_cart_barang barang = getTableView().getItems().get(getIndex());
                                         System.out.println(barang);
                                         System.out.println(getIndex());
-                                        cart.remove(getIndex());
-
+                                        Global_share_variable.removeitem(getIndex());
                                         generateTableData();
                                     });
 

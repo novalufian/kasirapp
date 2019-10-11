@@ -5,20 +5,29 @@ import javafx.scene.control.Button;
 public class Model_cart_barang {
 
     Integer no,harga, jumlah, potongan, totalharga;
-    String id, kode, nama, satuan;
+    String id, kode, nama, satuan, kodeKategori;
     Button delete;
 
-    public Model_cart_barang(Integer no,String id, String kode, String nama, Integer harga, Integer jumlah, Integer potongan, String satuan, Integer totalharga,  Button delete) {
+    public Model_cart_barang(Integer no,String id, String kode, String nama, String kodeKategori, Integer harga, Integer jumlah, Integer potongan, String satuan, Integer totalharga,  Button delete) {
         this.no = no;
         this.harga = harga;
         this.jumlah = jumlah;
         this.potongan = potongan;
+        this.kodeKategori = kodeKategori;
         this.totalharga = totalharga;
         this.id = id;
         this.kode = kode;
         this.nama = nama;
         this.satuan = satuan;
         this.delete = delete;
+    }
+
+    public String getKodeKategori() {
+        return kodeKategori;
+    }
+
+    public void setKodeKategori(String kodeKategori) {
+        this.kodeKategori = kodeKategori;
     }
 
     public Integer getNo() {

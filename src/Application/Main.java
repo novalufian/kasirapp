@@ -1,5 +1,6 @@
 package Application;
 
+import Application.controller.Controller_main;
 import Application.controller.Controller_pembayaran;
 import Application.libs.Error_template;
 import Application.libs.Global_share_variable;
@@ -7,8 +8,13 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+
+import java.util.Optional;
 
 public class Main extends Application {
 
@@ -16,10 +22,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("view/main.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource("view/main.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 1280, 860);
+        primaryStage.setScene(scene);
         primaryStage.setTitle("Kasir app");
-        primaryStage.setScene(new Scene(root, 1280, 860));
         primaryStage.show();
+
+        Controller_main controller_main = fxmlLoader.getController();
 
 //        primaryStage.setMaximized(true);
 
@@ -34,7 +44,7 @@ public class Main extends Application {
                             simpanTransaksi();
                             break;
                         case F4:
-                            createTransaksiBaru();
+                            createTransaksiBaru(controller_main);
                             break;
                         case F5:
                             openMemberArea();
@@ -54,9 +64,27 @@ public class Main extends Application {
                 Stage stage = new Stage();
                 stage.setTitle("New Window");
                 stage.setScene(scene);
+                Global_share_variable.setPembayaranStage(stage);
                 stage.show();
 
-                Global_share_variable.setPembayaranStage(stage);
+                Controller_pembayaran controller_pembayaran = fxmlLoader.getController();
+                controller_pembayaran.setStage(stage);
+
+                stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                    switch (event.getCode()){
+                        case F10:
+                            controller_pembayaran.doCetakStruk();
+                            break;
+                        case F9:
+                            controller_pembayaran.validatePembayaran();
+                            break;
+
+                        case ESCAPE:
+                            stage.close();
+                            break;
+                    }
+                });
+
             }catch (Exception e){
                 error_template.error(e);
             }
@@ -68,7 +96,17 @@ public class Main extends Application {
 
     private void simpanTransaksi(){}
 
-    private void createTransaksiBaru(){}
+    private void createTransaksiBaru(Controller_main controller){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Konfirmasi");
+        alert.setContentText("apakah anda membuat transaksi baru");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            controller.resetValue();
+        } else {
+            alert.close();
+        }
+    }
 
     private void openMemberArea(){}
 

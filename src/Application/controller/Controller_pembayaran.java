@@ -69,11 +69,46 @@ public class Controller_pembayaran implements Initializable {
 
     @FXML
     void cetakStrukPenjualan(ActionEvent event) {
+        doCetakStruk();
+    }
 
+    public void doCetakStruk(){
+        if(btnSImpan.isDisabled()){
+            error_template.success("INFO", "sedang mencetak struk");
+        }else{
+            error_template.warning("Peringatan", "Silakan proses penjualan terlebih dahulu");
+        }
     }
 
     @FXML
     void simpanPenjualan(ActionEvent event) {
+        validatePembayaran();
+    }
+
+    public void validatePembayaran(){
+        if(bayartunai.getText().isEmpty()){
+            error_template.warning("Peringatan", "sialahkan masukkan nominal pembayaran");
+//            bayartunai.requestFocus();
+        }else{
+            btnSImpan.setDisable(true);
+            if((Integer.parseInt(bayartunai.getText()) - globalTotalBlanja) > 0){
+                System.out.println((Integer.parseInt(bayartunai.getText()) - globalTotalBlanja));
+                doSimpanData();
+            }else{
+                if (caraPembayaran.getValue()=="tunai"){
+                    error_template.warning("Peringatan", "jumlah tunai tidak valid");
+                    btnSImpan.setDisable(false);
+                }else{
+                    doSimpanData();
+                }
+            }
+
+
+
+        }
+    }
+
+    public void doSimpanData(){
         Boolean carabayar = true;
         LocalDate _jtauhtempo = null;
         if(caraPembayaran.getValue() == "angsur"){
@@ -81,16 +116,15 @@ public class Controller_pembayaran implements Initializable {
             _jtauhtempo = jatuhTempo.getValue();
         }
 
-        int piutangsisa = 0;
-        if((globalTotalBlanja - Integer.parseInt(bayartunai.getText())) > 0){
-            piutangsisa = globalTotalBlanja - Integer.parseInt(bayartunai.getText());
-
-        }
-
         String idPenjualan = Global_share_variable.getIdPenjualan();
 
         ConnectionClass connectionClass = new ConnectionClass();
         Connection connection = connectionClass.getConnection();
+
+        int piutangsisa = 0;
+        if((globalTotalBlanja - Integer.parseInt(bayartunai.getText())) > 0){
+            piutangsisa = globalTotalBlanja - Integer.parseInt(bayartunai.getText());
+        }
 
         try {
             String sql = "INSERT INTO penjualan " +
@@ -112,10 +146,12 @@ public class Controller_pembayaran implements Initializable {
                 doSimpanDetail("PJL-"+ idPenjualan);
             }else{
                 error_template.warning("Peringatan", "terdapan kesalahan penyimpanan, periksa jaringan / koneksi anda");
+                btnSImpan.setDisable(false);
             }
 
         }catch (Exception e){
             error_template.error(e);
+            btnSImpan.setDisable(false);
         }
 
     }
@@ -153,10 +189,12 @@ public class Controller_pembayaran implements Initializable {
                     }
                 }else{
                     error_template.warning("Peringatan", "gagal disimpan, cob lagi");
+                    btnSImpan.setDisable(false);
                 }
 
             }catch (Exception e){
                 error_template.error(e);
+                btnSImpan.setDisable(false);
             }
         });
 
@@ -169,15 +207,23 @@ public class Controller_pembayaran implements Initializable {
         Boolean isNumber = bayartunai.getText().matches("[0-9]*");
         if (isNumber){
             String tunai = bayartunai.getText();
-            Integer kb = 0;
-            kb = Integer.parseInt(tunai) - globalTotalBlanja;
+            try {
+                Integer kb = 0;
+                kb = Integer.parseInt(tunai) - globalTotalBlanja;
 
                 DecimalFormat formatter = new DecimalFormat("#,###");
                 String newValueStr = formatter.format(Double.parseDouble(kb.toString()));
 
                 kembalian.setText("Rp.  " + newValueStr + ",-");
+            }catch (Exception e){
+            }
+
         }else{
             error_template.warning("Ooooppss !", "input harus angka");
+        }
+
+        if (event.getCode().equals(KeyCode.ENTER)){
+            validatePembayaran();
         }
 
 
@@ -213,12 +259,6 @@ public class Controller_pembayaran implements Initializable {
         jatuhTempo.setValue(LocalDate.now());
         btnCetakStruk.setDisable(true);
 
-        Global_share_variable.getPembayaranStage().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode().equals(KeyCode.F10)){
-                error_template.success("INFO", "sedang mencetak struk");
-//                do cedak struk
-            }
-        });
 
     }
 

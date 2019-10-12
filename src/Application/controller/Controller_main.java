@@ -8,12 +8,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.net.URL;
@@ -30,7 +33,6 @@ public class Controller_main implements Initializable {
 
     private static ConnectionClass connectionClass = new ConnectionClass();
     private static Connection connection = connectionClass.getConnection();
-
     private static Error_template error_template = new Error_template();
 
     @FXML
@@ -53,6 +55,15 @@ public class Controller_main implements Initializable {
 
     @FXML
     private Button btnTambahToCart;
+
+    @FXML
+    private Button btnMember;
+
+    @FXML
+    private Button btnSimpan;
+
+    @FXML
+    private Button btnBaru;
 
     @FXML
     private TextField kodeBarang;
@@ -99,6 +110,61 @@ public class Controller_main implements Initializable {
     @FXML
     void doCariMember(ActionEvent event) {
 
+    }
+
+    @FXML
+    void doOpenFormBayar(ActionEvent event) {
+
+    }
+
+    @FXML
+    void doSimpanTransaksi(ActionEvent event) {
+
+    }
+
+    @FXML
+    void donTransaksiBaru(ActionEvent event) {
+
+    }
+    @FXML
+    private void doOpenFormMember(ActionEvent event) {
+        System.out.println("open form");
+//        if (Global_share_variable.getCart().size() > 0){
+//            try {
+//                FXMLLoader fxmlLoader = new FXMLLoader();
+//                fxmlLoader.setLocation(getClass().getResource("view/pembayaran.fxml"));
+//                Scene scene = new Scene(fxmlLoader.load(), 600, 600);
+//                Stage stage = new Stage();
+//                stage.setTitle("New Window");
+//                stage.setScene(scene);
+//                Global_share_variable.setPembayaranStage(stage);
+//                stage.show();
+//
+//                Controller_pembayaran controller_pembayaran = fxmlLoader.getController();
+//                controller_pembayaran.setStage(stage);
+//
+//                stage.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+//                    switch (e.getCode()){
+//                        case F10:
+//                            controller_pembayaran.doCetakStruk();
+//                            break;
+//                        case F9:
+//                            controller_pembayaran.validatePembayaran();
+//                            break;
+//
+//                        case ESCAPE:
+//                            stage.close();
+//                            break;
+//                    }
+//                });
+//
+//            }catch (Exception e){
+//                error_template.error(e);
+//            }
+//
+//        }else{
+//            error_template.warning("Peringatan", "Form bayar tidak dapat dibuka akrena tidak ada item di keranjang");
+//        }
     }
 
     @FXML
@@ -219,7 +285,7 @@ public class Controller_main implements Initializable {
 
     }
 
-    private void resetValue(){
+    public void resetValue(){
         String idPenjualan = System.currentTimeMillis()+""+new Random().nextInt(9999);
 
         satuanItem.getSelectionModel().select(0);
@@ -233,6 +299,7 @@ public class Controller_main implements Initializable {
         kodeBarang.setText("");
         kodeBarang.requestFocus();
         jumlahItem.setText("");
+        labelTotalBelanja.setText("Rp. 0,-");
 
         Global_share_variable.clearCart();
 

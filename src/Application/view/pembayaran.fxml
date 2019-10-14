@@ -55,7 +55,7 @@
             <Font size="14.0" />
          </font>
       </Text>
-      <TextField fx:id="bayartunai" alignment="CENTER_RIGHT" layoutX="246.0" layoutY="412.0" onKeyTyped="#onBayarTunai" prefHeight="30.0" prefWidth="282.0" promptText="100,000,-">
+      <TextField fx:id="bayartunai" alignment="CENTER_RIGHT" layoutX="246.0" layoutY="412.0" onKeyReleased="#onBayarTunai" prefHeight="30.0" prefWidth="282.0" promptText="100,000,-">
          <font>
             <Font size="14.0" />
          </font>

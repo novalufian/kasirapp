@@ -19,7 +19,6 @@ public class Error_template {
 
         Exception ex = e;
 
-// Create expandable Exception.
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         ex.printStackTrace(pw);
@@ -51,7 +50,7 @@ public class Error_template {
         alert.setTitle(title);
         alert.setHeaderText("");
         alert.setContentText(message);
-        alert.showAndWait();
+        alert.show();
     }
 
     public void success(String title, String message){
@@ -61,5 +60,7 @@ public class Error_template {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+
 
 }

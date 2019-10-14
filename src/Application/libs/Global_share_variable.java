@@ -11,6 +11,19 @@ public class Global_share_variable {
     private static String idKasir;
     private static ObservableList<Model_cart_barang> cart = FXCollections.observableArrayList();
     private static Stage pembayaranStage ;
+    private static Class mainClass ;
+
+    public static void setCart(ObservableList<Model_cart_barang> cart) {
+        Global_share_variable.cart = cart;
+    }
+
+    public static Class getMainClass() {
+        return mainClass;
+    }
+
+    public static void setMainClass(Class mainClass) {
+        Global_share_variable.mainClass = mainClass;
+    }
 
     public static Stage getPembayaranStage() {
         return pembayaranStage;

@@ -10,10 +10,11 @@ module kasirapp {
     requires java.sql;
 
     exports Application.controller;
-    exports  Application.model;
+    exports Application.model;
 
     opens Application.controller;
     opens Application.model;
+    opens Application.view;
     opens Application;
 
 }

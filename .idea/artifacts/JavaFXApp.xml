@@ -4,12 +4,19 @@
     <properties id="javafx-properties">
       <options>
         <option name="appClass" value="sample.Main" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="title" value="kasir app" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
       </options>
     </properties>
     <root id="root">
       <element id="archive" name="JavaFXApp.jar">
         <element id="module-output" name="kasirapp" />
       </element>
+      <element id="library" level="application" name="mysql-connector" />
+      <element id="library" level="application" name="javafx-swt" />
     </root>
   </artifact>
 </component>

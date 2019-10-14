@@ -8,12 +8,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.net.URL;
@@ -30,7 +33,6 @@ public class Controller_main implements Initializable {
 
     private static ConnectionClass connectionClass = new ConnectionClass();
     private static Connection connection = connectionClass.getConnection();
-
     private static Error_template error_template = new Error_template();
 
     @FXML
@@ -55,7 +57,16 @@ public class Controller_main implements Initializable {
     private Button btnTambahToCart;
 
     @FXML
-    private TextField kodeBarang;
+    private Button btnMember;
+
+    @FXML
+    private Button btnSimpan;
+
+    @FXML
+    private Button btnBaru;
+
+    @FXML
+    public TextField kodeBarang;
 
     @FXML
     private TextField jumlahItem;
@@ -93,13 +104,157 @@ public class Controller_main implements Initializable {
     @FXML
     private TableColumn<Model_cart_barang, Button> action;
 
+    public void setKodePelanggan(String kodePelanggan) {
+        this.kodePelanggan .setText(kodePelanggan);
+    }
+
     @FXML
     private Text labelTotalBelanja;
+    public void ShowAlert(String msg){
+        error_template.warning("oke", msg);
+    }
 
     @FXML
     void doCariMember(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/Application/view/carimember.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 700, 600);
+            Stage stage = new Stage();
+            stage.setTitle("New Window");
+            stage.setScene(scene);
+            if (!stage.isShowing()){
+                stage.show();
+            }else{
+                error_template.success("Pemberitahuan", "form cari brang sudah tampil");
+            }
+
+            stage.setOnHidden(event1 -> {
+            });
+
+            stage.addEventFilter(KeyEvent.KEY_PRESSED, e ->{
+                switch (e.getCode()){
+                    case ESCAPE:
+                        stage.close();
+                        break;
+                }
+            });
+        }catch (Exception e){
+            error_template.error(e);
+        }
+    }
+
+    @FXML
+    void doSimpanTransaksi(ActionEvent event) {
 
     }
+
+    @FXML
+    void donTransaksiBaru(ActionEvent event) {
+
+    }
+
+    @FXML
+    void doOpenFormMember(ActionEvent event){
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/Application/view/member.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 1000, 600);
+            Stage stage = new Stage();
+            stage.setTitle("New Window");
+            stage.setScene(scene);
+            if (!stage.isShowing()){
+                stage.show();
+            }else{
+                error_template.success("Pemberitahuan", "form cari brang sudah tampil");
+            }
+
+            stage.setOnHidden(event1 -> {
+            });
+
+            stage.addEventFilter(KeyEvent.KEY_PRESSED, e ->{
+                switch (e.getCode()){
+                    case ESCAPE:
+                        stage.close();
+                        break;
+                }
+            });
+        }catch (Exception e){
+            error_template.error(e);
+        }
+    }
+
+    @FXML
+    void onCariBarang(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/Application/view/barang.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+            Stage stage = new Stage();
+            stage.setTitle("New Window");
+            stage.setScene(scene);
+            if (!stage.isShowing()){
+                stage.show();
+            }else{
+                error_template.success("Pemberitahuan", "form cari brang sudah tampil");
+            }
+
+            stage.setOnHidden(event1 -> {
+            });
+
+            stage.addEventFilter(KeyEvent.KEY_PRESSED, e ->{
+                switch (e.getCode()){
+                    case ESCAPE:
+                        stage.close();
+                        break;
+                }
+            });
+        }catch (Exception e){
+            error_template.error(e);
+        }
+    }
+
+    @FXML
+    void doOpenFormPemayaran(ActionEvent event) {
+
+        if (Global_share_variable.getCart().size() > 0){
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader();
+                fxmlLoader.setLocation(getClass().getResource("/Application/view/pembayaran.fxml"));
+                Scene scene = new Scene(fxmlLoader.load(), 600, 600);
+                Stage stage = new Stage();
+                stage.setTitle("New Window");
+                stage.setScene(scene);
+                Global_share_variable.setPembayaranStage(stage);
+                stage.show();
+
+                Controller_pembayaran controller_pembayaran = fxmlLoader.getController();
+                controller_pembayaran.setStage(stage);
+
+                stage.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+                    switch (e.getCode()){
+                        case F10:
+                            controller_pembayaran.doCetakStruk();
+                            break;
+                        case F9:
+                            controller_pembayaran.validatePembayaran();
+                            break;
+
+                        case ESCAPE:
+                            stage.close();
+                            break;
+                    }
+                });
+
+            }catch (Exception e){
+                error_template.error(e);
+            }
+
+        }else{
+            error_template.warning("Peringatan", "Form bayar tidak dapat dibuka akrena tidak ada item di keranjang");
+        }
+    }
+
 
     @FXML
     void nextToJumlah(KeyEvent event) {
@@ -108,6 +263,13 @@ public class Controller_main implements Initializable {
         if(x){
             jumlahItem.requestFocus();
         }
+    }
+
+    public void setCodeText(String kode){
+        kodeBarang.setText(kode);
+    }
+    public void setMemberid(String id){
+        kodePelanggan.setText(id);
     }
 
     void cariBrarang(String id){
@@ -186,7 +348,7 @@ public class Controller_main implements Initializable {
 
     @FXML
     void tambahToChart(ActionEvent event) {
-
+        System.out.println("oke");
     }
 
     private void generateTable(){
@@ -202,7 +364,7 @@ public class Controller_main implements Initializable {
         createaBtnTableView("delete");
     }
 
-    private void generateTableData(){
+    public void generateTableData(){
         tableCartBarang.setItems(Global_share_variable.getCart());
 
         AtomicReference<Integer> totalBelanja = new AtomicReference<>(0);
@@ -219,7 +381,7 @@ public class Controller_main implements Initializable {
 
     }
 
-    private void resetValue(){
+    public void resetValue(){
         String idPenjualan = System.currentTimeMillis()+""+new Random().nextInt(9999);
 
         satuanItem.getSelectionModel().select(0);
@@ -233,6 +395,7 @@ public class Controller_main implements Initializable {
         kodeBarang.setText("");
         kodeBarang.requestFocus();
         jumlahItem.setText("");
+        labelTotalBelanja.setText("Rp. 0,-");
 
         Global_share_variable.clearCart();
 

@@ -5,6 +5,7 @@ import Application.libs.Error_template;
 import Application.libs.Global_share_variable;
 import Application.model.Model_barang;
 import Application.model.Model_cart_barang;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -184,6 +185,8 @@ public class Controller_barang implements Initializable {
         generateTableData();
         doFilterData();
 
-        textCari.requestFocus();
+        Platform.runLater(()->{
+            textCari.requestFocus();
+        });
     }
 }

@@ -50,10 +50,16 @@ public class Controller_formMember implements Initializable {
     public ComboBox<String> sex;
 
     @FXML
-    public TextField tempatLahir;
+    public ComboBox<String> jenisJaminan;
 
     @FXML
-    public DatePicker tanggalLahir;
+    public TextField namaPemilikJaminan;
+
+    @FXML
+    public TextField nomoridentitasjaminan;
+
+    @FXML
+    public TextField populasiTernak;
 
     @FXML
     public TextArea alamat;
@@ -93,41 +99,47 @@ public class Controller_formMember implements Initializable {
         try {
             if (btnSimpan.getText().equals("Simpan")){
                 System.out.println("ini simpan");
-                String sql = "INSERT INTO pelanggan " +
-                        "(id_pelanggan , pelanggan_nik, pelanggan_nama, pelanggan_notelp, pelanggan_alamat, pelanggan_tempat_lahir, pelanggan_tgl_lahir, pelanggan_sex, pelanggan_photo) " +
-                        "VALUES (?,?,?,?,?,?,?,?, ?)";
+                String sql = "INSERT INTO mitra " +
+                        "(id_mitra , nama_mitra, sex_mitra, alamat_mitra, NIK, no_telepon_mitra, populasi_ternak, jenis_jaminan, nama_pemilik_jaminan, nomor_identitas_jaminan) " +
+                        "VALUES (?,?,?,?,?,?,?,?,?,?)";
                 PreparedStatement statement = connection.prepareStatement(sql);
                 statement.setString(1, diPelanggan.getText());
-                statement.setString(2, nik.getText());
-                statement.setString(3, nama.getText());
-                statement.setString(4, notelp.getText());
-                statement.setString(5, alamat.getText());
-                statement.setString(6, tempatLahir.getText());
-                statement.setDate(7, Date.valueOf(tanggalLahir.getValue()));
-                statement.setBoolean(8, jk);
-                statement.setString(9, "lorem");
+                statement.setString(2, nama.getText());
+                statement.setBoolean(3, jk);
+                statement.setString(4, alamat.getText());
+                statement.setString(5, nik.getText());
+                statement.setString(6, notelp.getText());
+                statement.setString(7, populasiTernak.getText());
+                statement.setString(8, jenisJaminan.getSelectionModel().getSelectedItem());
+                statement.setString(9, namaPemilikJaminan.getText());
+                statement.setString(10, nomoridentitasjaminan.getText());
                 rs = statement.executeUpdate();
 
                 msgInfo = "data berhasil disimpan";
                 msgWarning = "data gagal disimpan";
             }else{
-                String sql = "UPDATE pelanggan SET pelanggan_nik = ?, " +
-                        "pelanggan_nama = ?, " +
-                        "pelanggan_notelp = ?," +
-                        "pelanggan_alamat = ?," +
-                        "pelanggan_tempat_lahir = ?," +
-                        "pelanggan_tgl_lahir = ? ," +
-                        "pelanggan_sex = ? " +
-                        "WHERE id_pelanggan = ?";
+                String sql = "UPDATE mitra SET " +
+                        "nama_mitra = ?, " +
+                        "sex_mitra = ?, " +
+                        "alamat_mitra = ?," +
+                        "NIK = ?," +
+                        "no_telepon_mitra = ?," +
+                        "populasi_ternak = ? ," +
+                        "jenis_jaminan = ? ," +
+                        "nama_pemilik_jaminan = ? ," +
+                        "nomor_identitas_jaminan = ? " +
+                        "WHERE id_mitra = ?";
                 PreparedStatement statement = connection.prepareStatement(sql);
-                statement.setString(1, nik.getText());
-                statement.setString(2, nama.getText());
-                statement.setString(3, notelp.getText());
-                statement.setString(4, alamat.getText());
-                statement.setString(5, tempatLahir.getText());
-                statement.setDate(6, Date.valueOf(tanggalLahir.getValue()));
-                statement.setBoolean(7, jk);
-                statement.setString(8, diPelanggan.getText());
+                statement.setString(1, nama.getText());
+                statement.setBoolean(2, jk);
+                statement.setString(3, alamat.getText());
+                statement.setString(4, nik.getText());
+                statement.setString(5, notelp.getText());
+                statement.setString(6, populasiTernak.getText());
+                statement.setString(7, jenisJaminan.getSelectionModel().getSelectedItem());
+                statement.setString(8, namaPemilikJaminan.getText());
+                statement.setString(9, nomoridentitasjaminan.getText());
+                statement.setString(10, diPelanggan.getText());
 
                 rs = statement.executeUpdate();
 

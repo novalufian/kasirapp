@@ -6,11 +6,10 @@ import java.util.Date;
 
 public class Model_member {
     Integer no;
-    String id, nama, nik, noTelp, sex, alamat, tempatLahir;
-    Date tanggalLahir;
+    String id, nama, nik, noTelp, sex, alamat, populasiTernak, jenisJaminan, nama_pemilik_jaminan, nomor_identitas_jaminan;
     Button view, update, delete;
 
-    public Model_member(Integer no, String id, String nama, String nik, String noTelp, String sex, String alamat, String tempatLahir, Date tanggalLahir, Button view, Button update, Button delete) {
+    public Model_member(Integer no, String id, String nama, String nik, String noTelp, String sex, String alamat, String populasiTernak, String jenisJaminan, String nama_pemilik_jaminan, String nomor_identitas_jaminan, Button view, Button update, Button delete) {
         this.no = no;
         this.id = id;
         this.nama = nama;
@@ -18,8 +17,10 @@ public class Model_member {
         this.noTelp = noTelp;
         this.sex = sex;
         this.alamat = alamat;
-        this.tempatLahir = tempatLahir;
-        this.tanggalLahir = tanggalLahir;
+        this.populasiTernak = populasiTernak;
+        this.jenisJaminan = jenisJaminan;
+        this.nama_pemilik_jaminan = nama_pemilik_jaminan;
+        this.nomor_identitas_jaminan = nomor_identitas_jaminan;
         this.view = view;
         this.update = update;
         this.delete = delete;
@@ -81,20 +82,36 @@ public class Model_member {
         this.alamat = alamat;
     }
 
-    public String getTempatLahir() {
-        return tempatLahir;
+    public String getPopulasiTernak() {
+        return populasiTernak;
     }
 
-    public void setTempatLahir(String tempatLahir) {
-        this.tempatLahir = tempatLahir;
+    public void setPopulasiTernak(String populasiTernak) {
+        this.populasiTernak = populasiTernak;
     }
 
-    public Date getTanggalLahir() {
-        return tanggalLahir;
+    public String getJenisJaminan() {
+        return jenisJaminan;
     }
 
-    public void setTanggalLahir(Date tanggalLahir) {
-        this.tanggalLahir = tanggalLahir;
+    public void setJenisJaminan(String jenisJaminan) {
+        this.jenisJaminan = jenisJaminan;
+    }
+
+    public String getNama_pemilik_jaminan() {
+        return nama_pemilik_jaminan;
+    }
+
+    public void setNama_pemilik_jaminan(String nama_pemilik_jaminan) {
+        this.nama_pemilik_jaminan = nama_pemilik_jaminan;
+    }
+
+    public String getNomor_identitas_jaminan() {
+        return nomor_identitas_jaminan;
+    }
+
+    public void setNomor_identitas_jaminan(String nomor_identitas_jaminan) {
+        this.nomor_identitas_jaminan = nomor_identitas_jaminan;
     }
 
     public Button getView() {

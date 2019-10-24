@@ -5,6 +5,7 @@ import Application.libs.Error_template;
 import Application.libs.Global_share_variable;
 import Application.model.Model_cart_barang;
 import Application.model.Model_member;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -61,7 +62,7 @@ public class Controller_carimember implements Initializable {
         Connection connection = connectionClass.getConnection();
 
         try {
-            String sql = "SELECT * FROM pelanggan WHERE published = 1";
+            String sql = "SELECT * FROM mitra WHERE published = 1";
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
 
@@ -69,14 +70,16 @@ public class Controller_carimember implements Initializable {
             while (rs.next()){
                 member.add(new Model_member(
                         index++,
-                        rs.getString("id_pelanggan"),
-                        rs.getString("pelanggan_nama"),
-                        rs.getString("pelanggan_nik"),
-                        rs.getString("pelanggan_notelp"),
-                        rs.getString("pelanggan_sex"),
-                        rs.getString("pelanggan_alamat"),
-                        rs.getString("pelanggan_tempat_lahir"),
-                        rs.getDate("pelanggan_tgl_lahir"),
+                        rs.getString("id_mitra"),
+                        rs.getString("nama_mitra"),
+                        rs.getString("NIK"),
+                        rs.getString("no_telepon_mitra"),
+                        rs.getString("sex_mitra"),
+                        rs.getString("alamat_mitra"),
+                        rs.getString("populasi_ternak"),
+                        rs.getString("jenis_jaminan"),
+                        rs.getString("nama_pemilik_jaminan"),
+                        rs.getString("nomor_identitas_jaminan"),
                         new Button("view"),
                         new Button("update"),
                         new Button("delete")
@@ -156,5 +159,9 @@ public class Controller_carimember implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         generateTable();
         generateTableData();
+
+        Platform.runLater(()->{
+            cariMember.requestFocus();
+        });
     }
 }

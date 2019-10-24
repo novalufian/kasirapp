@@ -51,7 +51,7 @@ public class Controller_login implements Initializable {
                 Scene scene = new Scene(fxmlLoader.load(), 1280, 840);
                 Stage stage = (Stage) username.getScene().getWindow();
                 stage.setScene(scene);
-                stage.setMaximized(true);
+//                stage.setMaximized(true);
 
                 stage.addEventFilter(
                         KeyEvent.KEY_RELEASED,
@@ -77,15 +77,47 @@ public class Controller_login implements Initializable {
                                     openMemberArea();
                                     event.consume();
                                     break;
+                                case F12:
+                                    openMEmberSearch();
+                                    event.consume();
+                                    break;
                             }
                         }
                 );
-
 
             }
         }catch (Exception e){
             error_template.error(e);
             e.printStackTrace();
+        }
+    }
+
+    void openMEmberSearch(){
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/Application/view/carimember.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 700, 600);
+            Stage stage = new Stage();
+            stage.setTitle("New Window");
+            stage.setScene(scene);
+            if (!stage.isShowing()){
+                stage.show();
+            }else{
+                error_template.success("Pemberitahuan", "form cari brang sudah tampil");
+            }
+
+            stage.setOnHidden(event1 -> {
+            });
+
+            stage.addEventFilter(KeyEvent.KEY_PRESSED, e ->{
+                switch (e.getCode()){
+                    case ESCAPE:
+                        stage.close();
+                        break;
+                }
+            });
+        }catch (Exception e){
+            error_template.error(e);
         }
     }
 

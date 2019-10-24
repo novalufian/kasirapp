@@ -3,6 +3,7 @@ package Application.controller;
 import Application.conectify.ConnectionClass;
 import Application.libs.Error_template;
 import Application.libs.Global_share_variable;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -235,7 +236,6 @@ public class Controller_pembayaran implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        bayartunai.requestFocus();
 
         ObservableList pembayaran = FXCollections.observableArrayList("tunai", "angsuran");
         caraPembayaran.setItems(pembayaran);
@@ -258,6 +258,10 @@ public class Controller_pembayaran implements Initializable {
 
         jatuhTempo.setValue(LocalDate.now());
         btnCetakStruk.setDisable(true);
+
+        Platform.runLater(()->{
+            bayartunai.requestFocus();
+        });
     }
 
 }

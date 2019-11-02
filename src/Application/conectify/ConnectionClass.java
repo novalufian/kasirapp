@@ -7,7 +7,7 @@ public class ConnectionClass {
 
     private String uname = "root";
     private String pass = "leon1108";
-    private String host = "jdbc:mysql://localhost:3306/kasirapp";
+    private String host = "jdbc:mysql://192.168.1.2:3306/kasirapp";
     public Connection connection;
 
     public Connection getConnection(){

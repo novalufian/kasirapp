@@ -1,5 +1,6 @@
 package Application.libs;
 
+import Application.controller.Controller_main;
 import Application.model.Model_cart_barang;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +13,15 @@ public class Global_share_variable {
     private static ObservableList<Model_cart_barang> cart = FXCollections.observableArrayList();
     private static Stage pembayaranStage ;
     private static Class mainClass ;
+    private static Controller_main controller_main;
+
+    public static Controller_main getController_main() {
+        return controller_main;
+    }
+
+    public static void setController_main(Controller_main controller_main) {
+        Global_share_variable.controller_main = controller_main;
+    }
 
     public static void setCart(ObservableList<Model_cart_barang> cart) {
         Global_share_variable.cart = cart;

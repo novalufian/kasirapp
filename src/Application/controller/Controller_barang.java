@@ -29,6 +29,8 @@ import java.util.ResourceBundle;
 public class Controller_barang implements Initializable {
     private static Error_template error_template = new Error_template();
 
+    Controller_main window_parent;
+
     @FXML
     private TableView<Model_barang> tableBrang;
 
@@ -164,6 +166,7 @@ public class Controller_barang implements Initializable {
                                     btn.setOnAction(event -> {
                                         Model_barang barang = getTableView().getItems().get(getIndex());
                                         System.out.println(barang.getKode());
+                                        window_parent.setCodeText(barang.getKode());
 
                                     });
 
@@ -177,6 +180,15 @@ public class Controller_barang implements Initializable {
                 };
 
         action.setCellFactory(cellFactory);
+    }
+
+//    public void initialize() {
+//
+//    }
+
+    public Controller_barang(Controller_main main){
+//        initialize();
+        window_parent = main;
     }
 
     @Override

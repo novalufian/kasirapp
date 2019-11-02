@@ -4,6 +4,7 @@ import Application.conectify.ConnectionClass;
 import Application.libs.Error_template;
 import Application.libs.Global_share_variable;
 import Application.model.Model_cart_barang;
+import Application.model.Share_variable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -31,9 +32,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Controller_main implements Initializable {
 
+    Controller_barang controller_barang;
+    Controller controller;
+
     private static ConnectionClass connectionClass = new ConnectionClass();
     private static Connection connection = connectionClass.getConnection();
     private static Error_template error_template = new Error_template();
+
+    Global_share_variable global_share_variable;
 
     @FXML
     private TextField noTransaksi;
@@ -104,14 +110,17 @@ public class Controller_main implements Initializable {
     @FXML
     private TableColumn<Model_cart_barang, Button> action;
 
-    public void setKodePelanggan(String kodePelanggan) {
-        this.kodePelanggan .setText(kodePelanggan);
+
+    public void setKodePelanggan(String kode) {
+        kodePelanggan.setText(kode);
     }
 
     @FXML
     private Text labelTotalBelanja;
+
     public void ShowAlert(String msg){
         error_template.warning("oke", msg);
+        kodePelanggan.setText(msg);
     }
 
     @FXML
@@ -156,6 +165,7 @@ public class Controller_main implements Initializable {
 
     @FXML
     void doOpenFormMember(ActionEvent event){
+
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/Application/view/member.fxml"));
@@ -165,12 +175,11 @@ public class Controller_main implements Initializable {
             stage.setScene(scene);
             if (!stage.isShowing()){
                 stage.show();
+
             }else{
                 error_template.success("Pemberitahuan", "form cari brang sudah tampil");
             }
 
-            stage.setOnHidden(event1 -> {
-            });
 
             stage.addEventFilter(KeyEvent.KEY_PRESSED, e ->{
                 switch (e.getCode()){
@@ -186,15 +195,22 @@ public class Controller_main implements Initializable {
 
     @FXML
     void onCariBarang(ActionEvent event) {
+//        controller = new Controller(this);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/Application/view/barang.fxml"));
+            Controller_barang controller_barang = new Controller_barang(this);
+
+            fxmlLoader.setController(controller_barang);
             Scene scene = new Scene(fxmlLoader.load(), 800, 600);
             Stage stage = new Stage();
             stage.setTitle("New Window");
+            Global_share_variable.setController_main(this);
             stage.setScene(scene);
             if (!stage.isShowing()){
                 stage.show();
+//                controller_barang = new Controller_barang(this);
+
             }else{
                 error_template.success("Pemberitahuan", "form cari brang sudah tampil");
             }
@@ -211,6 +227,7 @@ public class Controller_main implements Initializable {
             });
         }catch (Exception e){
             error_template.error(e);
+            e.printStackTrace();
         }
     }
 

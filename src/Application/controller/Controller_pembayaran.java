@@ -31,9 +31,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Controller_pembayaran implements Initializable {
 
-    private static Stage myStage ;
     private static Integer globalTotalBlanja = 0;
     public static Error_template error_template = new Error_template();
+
+    Controller_main controller_main;
+
+    public Controller_pembayaran(Controller_main cmain) {
+        controller_main = cmain;
+    }
 
     @FXML
     private TextField vocher;
@@ -89,7 +94,6 @@ public class Controller_pembayaran implements Initializable {
     public void validatePembayaran(){
         if(bayartunai.getText().isEmpty()){
             error_template.warning("Peringatan", "sialahkan masukkan nominal pembayaran");
-//            bayartunai.requestFocus();
         }else{
             btnSImpan.setDisable(true);
             if((Integer.parseInt(bayartunai.getText()) - globalTotalBlanja) > 0){
@@ -133,7 +137,7 @@ public class Controller_pembayaran implements Initializable {
                     "VALUES (?,?,?,?,?,?,?,?,?)";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, "PJL-"+ idPenjualan);
-            statement.setString(2, "");
+            statement.setString(2, controller_main.kodePelanggan.getText());
             statement.setString(3, idPenjualan);
             statement.setInt(4, globalTotalBlanja);
             statement.setBoolean(5, carabayar);
@@ -230,9 +234,6 @@ public class Controller_pembayaran implements Initializable {
 
     }
 
-    public void setStage(Stage stage){
-        this.myStage = stage;
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

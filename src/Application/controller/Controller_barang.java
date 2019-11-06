@@ -167,6 +167,9 @@ public class Controller_barang implements Initializable {
                                         Model_barang barang = getTableView().getItems().get(getIndex());
                                         System.out.println(barang.getKode());
                                         window_parent.setCodeText(barang.getKode());
+                                        window_parent.jumlahItem.requestFocus();
+                                        Stage stage = (Stage) btn.getScene().getWindow();
+                                        stage.close();
 
                                     });
 
@@ -181,10 +184,6 @@ public class Controller_barang implements Initializable {
 
         action.setCellFactory(cellFactory);
     }
-
-//    public void initialize() {
-//
-//    }
 
     public Controller_barang(Controller_main main){
 //        initialize();

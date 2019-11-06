@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.net.URL;
@@ -24,6 +25,12 @@ import java.util.ResourceBundle;
 
 public class Controller_carimember implements Initializable {
     private static Error_template error_template = new Error_template();
+
+    Controller_main controller_main;
+
+    public Controller_carimember(Controller_main cmain) {
+        controller_main = cmain;
+    }
 
     @FXML
     private TextField cariMember;
@@ -139,8 +146,9 @@ public class Controller_carimember implements Initializable {
                                     btn.setOnAction(event -> {
                                         Model_member member = getTableView().getItems().get(getIndex());
 
-                                        new Controller_main().ShowAlert("dari sini om");
-                                        new Controller_main().setKodePelanggan("dari sini om");
+                                        controller_main.setKodePelanggan(member.getId());
+                                        Stage stage = (Stage) btn.getScene().getWindow();
+                                        stage.close();
                                     });
 
                                     setGraphic(btn);

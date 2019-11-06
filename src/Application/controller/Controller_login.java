@@ -53,37 +53,37 @@ public class Controller_login implements Initializable {
                 stage.setScene(scene);
 //                stage.setMaximized(true);
 
-                stage.addEventFilter(
-                        KeyEvent.KEY_RELEASED,
-                        event -> {
-                            switch (event.getCode()){
-                                case F1:
-                                    openCariBarang();
-                                    event.consume();
-                                    break;
-                                case F2:
-                                    openFormBayar();
-                                    event.consume();
-                                    break;
-                                case F3:
-                                    simpanTransaksi();
-                                    event.consume();
-                                    break;
-                                case F4:
-                                    createTransaksiBaru();
-                                    event.consume();
-                                    break;
-                                case F5:
-                                    openMemberArea();
-                                    event.consume();
-                                    break;
-                                case F12:
-                                    openMEmberSearch();
-                                    event.consume();
-                                    break;
-                            }
-                        }
-                );
+//                stage.addEventFilter(
+//                        KeyEvent.KEY_RELEASED,
+//                        event -> {
+//                            switch (event.getCode()){
+//                                case F1:
+//                                    openCariBarang();
+//                                    event.consume();
+//                                    break;
+//                                case F2:
+//                                    openFormBayar();
+//                                    event.consume();
+//                                    break;
+//                                case F3:
+//                                    simpanTransaksi();
+//                                    event.consume();
+//                                    break;
+//                                case F4:
+//                                    createTransaksiBaru();
+//                                    event.consume();
+//                                    break;
+//                                case F5:
+//                                    openMemberArea();
+//                                    event.consume();
+//                                    break;
+//                                case F12:
+//                                    openMEmberSearch();
+//                                    event.consume();
+//                                    break;
+//                            }
+//                        }
+//                );
 
             }
         }catch (Exception e){
@@ -164,7 +164,6 @@ public class Controller_login implements Initializable {
                 stage.show();
 
                 Controller_pembayaran controller_pembayaran = fxmlLoader.getController();
-                controller_pembayaran.setStage(stage);
 
                 stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
                     switch (event.getCode()){

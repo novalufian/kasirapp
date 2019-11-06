@@ -179,7 +179,6 @@ public class Controller_main implements Initializable {
     @FXML
     void nextToJumlah(KeyEvent event) {
         Boolean x = event.getCode().equals(KeyCode.ENTER);
-        System.out.println(x);
         if(x){
             jumlahItem.requestFocus();
         }
@@ -244,8 +243,9 @@ public class Controller_main implements Initializable {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/Application/view/piutang.fxml"));
-
-            Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+            Controller_piutang controller_piutang = new Controller_piutang();
+            fxmlLoader.setController(controller_piutang);
+            Scene scene = new Scene(fxmlLoader.load(), 900, 600);
             Stage stage = new Stage();
             stage.setTitle("Piutang form");
             stage.setScene(scene);

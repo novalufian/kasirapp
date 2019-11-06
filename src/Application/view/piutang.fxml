@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -7,9 +11,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #f5f0e3;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #f5f0e3;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane prefHeight="100.0" prefWidth="800.0" style="-fx-background-color: #007944;">
+      <Pane prefHeight="100.0" prefWidth="900.0" style="-fx-background-color: #007944;">
          <children>
             <Text fill="WHITE" layoutX="20.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Piutang form">
                <font>
@@ -18,17 +22,24 @@
             </Text>
          </children>
       </Pane>
-      <TableView fx:id="tableBrang" layoutX="25.0" layoutY="175.0" prefHeight="338.0" prefWidth="750.0">
+      <TableView fx:id="tableBrang" layoutX="25.0" layoutY="213.0" prefHeight="313.0" prefWidth="850.0">
         <columns>
-          <TableColumn fx:id="no" prefWidth="75.0" text="No" />
-          <TableColumn fx:id="kode" prefWidth="198.0" text="No Transaksi" />
-            <TableColumn fx:id="nama" prefWidth="191.0" text="total belanja" />
-            <TableColumn fx:id="kategori" prefWidth="162.0" text="Kategori" />
-            <TableColumn fx:id="action" prefWidth="123.0" text="Action" />
+          <TableColumn fx:id="faktur" prefWidth="196.0" text="No Faktur" />
+            <TableColumn fx:id="totalBelanja" prefWidth="152.0" text="total belanja" />
+          <TableColumn fx:id="terbayar" prefWidth="139.0" text="Terbayar" />
+            <TableColumn fx:id="hutang" prefWidth="129.0" text="Sisa Hutang" />
+            <TableColumn fx:id="jatuhtempo" prefWidth="135.0" text="Jatuh Tempo" />
+            <TableColumn fx:id="action" prefWidth="98.0" text="Action" />
         </columns>
       </TableView>
-<!--      <TextField fx:id="textCari" layoutX="25.0" layoutY="135.0" onKeyPressed="#doCariOnType" prefHeight="40.0" prefWidth="600.0" promptText="Ketik disini ..." />-->
-<!--      <Button fx:id="btnCari" layoutX="625.0" layoutY="135.0" mnemonicParsing="false" onAction="#doCariBarang" prefHeight="40.0" prefWidth="150.0" text="Cari barang" />-->
-<!--      <Button fx:id="btnSelesai" layoutX="625.0" layoutY="537.0" mnemonicParsing="false" onAction="#doSelesai" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #40bfc1;" text="Selesai [ ESC ]" textFill="WHITE" />-->
+      <TextField fx:id="textCari" layoutX="25.0" layoutY="173.0" prefHeight="40.0" prefWidth="700.0" promptText="Ketik disini ..." />
+      <Button fx:id="btnCari" layoutX="725.0" layoutY="173.0" mnemonicParsing="false" onAction="#doCariBarang" prefHeight="40.0" prefWidth="150.0" text="cari member">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
+      <TextField fx:id="tampilkanDataMember" layoutX="25.0" layoutY="107.0" prefHeight="40.0" prefWidth="288.0" promptText="Cari member" onKeyPressed="#doTampilkanDataMemberText" />
+      <Button layoutX="313.0" layoutY="107.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="101.0" text="tampilkan" onAction="#doTampilkanDataMember" />
+      <Button fx:id="carimember" layoutX="457.0" layoutY="107.0" mnemonicParsing="false" onAction="#doCariMember" prefHeight="40.0" prefWidth="70.0" text="Cari" />
+      <Button fx:id="btnSelesai" layoutX="641.0" layoutY="539.0" mnemonicParsing="false" onAction="#doSelesai" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #40bfc1;" text="Selesai [ ESC ]" textFill="WHITE" />
    </children>
 </AnchorPane>

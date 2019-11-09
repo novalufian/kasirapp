@@ -19,9 +19,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
+import java.sql.*;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.Random;
@@ -33,6 +31,9 @@ public class Controller_pembayaran implements Initializable {
 
     private static Integer globalTotalBlanja = 0;
     public static Error_template error_template = new Error_template();
+
+    ConnectionClass connectionClass = new ConnectionClass();
+    Connection connection = connectionClass.getConnection();
 
     Controller_main controller_main;
 
@@ -92,39 +93,38 @@ public class Controller_pembayaran implements Initializable {
     }
 
     public void validatePembayaran(){
-        if(bayartunai.getText().isEmpty()){
-            error_template.warning("Peringatan", "sialahkan masukkan nominal pembayaran");
+        if (btnSImpan.isDisabled()){
+            error_template.warning("Peringatan", "pembayaran sudah diproses");
         }else{
-            btnSImpan.setDisable(true);
-            if((Integer.parseInt(bayartunai.getText()) - globalTotalBlanja) > 0){
-                System.out.println((Integer.parseInt(bayartunai.getText()) - globalTotalBlanja));
-                doSimpanData();
+
+            if(bayartunai.getText().isEmpty()){
+                error_template.warning("Peringatan", "sialahkan masukkan nominal pembayaran");
             }else{
-                if (caraPembayaran.getValue()=="tunai"){
-                    error_template.warning("Peringatan", "jumlah tunai tidak valid");
-                    btnSImpan.setDisable(false);
-                }else{
+                btnSImpan.setDisable(true);
+                if((Integer.parseInt(bayartunai.getText()) - globalTotalBlanja) > 0){
+                    System.out.println((Integer.parseInt(bayartunai.getText()) - globalTotalBlanja));
                     doSimpanData();
+                }else{
+                    if (caraPembayaran.getValue()=="tunai"){
+                        error_template.warning("Peringatan", "jumlah tunai tidak valid");
+                        btnSImpan.setDisable(false);
+                    }else{
+                        doSimpanData();
+                    }
                 }
             }
-
-
 
         }
     }
 
     public void doSimpanData(){
         Boolean carabayar = true;
-        LocalDate _jtauhtempo = null;
-        if(caraPembayaran.getValue() == "angsur"){
+        LocalDate _jtauhtempo = jatuhTempo.getValue();
+        if(caraPembayaran.getValue() == "angsuran"){
             carabayar = false;
-            _jtauhtempo = jatuhTempo.getValue();
         }
 
         String idPenjualan = Global_share_variable.getIdPenjualan();
-
-        ConnectionClass connectionClass = new ConnectionClass();
-        Connection connection = connectionClass.getConnection();
 
         int piutangsisa = 0;
         if((globalTotalBlanja - Integer.parseInt(bayartunai.getText())) > 0){
@@ -132,6 +132,8 @@ public class Controller_pembayaran implements Initializable {
         }
 
         try {
+            connection.setAutoCommit(false);
+
             String sql = "INSERT INTO penjualan " +
                     "(id_penjualan, id_member, no_faktur_penjualan, total_pembelian, cara_pembayaran, piutang_jatuh_tempo, jumlah_terbayar, piutang_sisa, id_kasir) " +
                     "VALUES (?,?,?,?,?,?,?,?,?)";
@@ -141,7 +143,7 @@ public class Controller_pembayaran implements Initializable {
             statement.setString(3, idPenjualan);
             statement.setInt(4, globalTotalBlanja);
             statement.setBoolean(5, carabayar);
-            statement.setDate(6, null);
+            statement.setDate(6, Date.valueOf(_jtauhtempo));
             statement.setInt(7,Integer.parseInt(bayartunai.getText()));
             statement.setInt(8, piutangsisa);
             statement.setString(9, Global_share_variable.getIdKasir());
@@ -152,11 +154,22 @@ public class Controller_pembayaran implements Initializable {
             }else{
                 error_template.warning("Peringatan", "terdapan kesalahan penyimpanan, periksa jaringan / koneksi anda");
                 btnSImpan.setDisable(false);
+                connection.rollback();
             }
+
+            connection.commit();
+            connection.setAutoCommit(true);
 
         }catch (Exception e){
             error_template.error(e);
             btnSImpan.setDisable(false);
+
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                error_template.error(ex);
+
+            }
         }
 
     }
@@ -164,48 +177,63 @@ public class Controller_pembayaran implements Initializable {
     private void doSimpanDetail(String id){
         ConnectionClass connectionClass = new ConnectionClass();
         Connection connection = connectionClass.getConnection();
+        try {
+            connection.setAutoCommit(false);
 
-        AtomicInteger index = new AtomicInteger();
-        Global_share_variable.getCart().forEach(item ->{
-            try {
-                String sql = "INSERT INTO detail_penjualan " +
-                        "(id_detail_penjualan, id_penjualan, id_barang, kategori_barang_id, nama_barang, harga_jual, quantity, harga_total) " +
-                        "VALUES (?,?,?,?,?,?,?,?)";
-                PreparedStatement statement = connection.prepareStatement(sql);
-                statement.setString(1, "DPJL-"+System.currentTimeMillis()+""+new Random().nextInt(99999999));
-                statement.setString(2, id);
-                statement.setString(3, item.getId());
-                statement.setString(4, item.getKodeKategori());
-                statement.setString(5, item.getNama());
-                statement.setInt(6, item.getHarga());
-                statement.setInt(7, item.getJumlah());
-                statement.setInt(8, item.getTotalharga());
+            AtomicInteger index = new AtomicInteger();
+            Global_share_variable.getCart().forEach(item ->{
+                try {
 
-                int rs = statement.executeUpdate();
-                if (rs > 0){
-                    index.getAndIncrement();
-                    Integer x = Integer.parseInt(String.valueOf(index));
+                    String sql = "INSERT INTO detail_penjualan " +
+                            "(id_detail_penjualan, id_penjualan, id_barang, kategori_barang_id, nama_barang, harga_jual, quantity, harga_total) " +
+                            "VALUES (?,?,?,?,?,?,?,?)";
+                    PreparedStatement statement = connection.prepareStatement(sql);
+                    statement.setString(1, "DPJL-"+System.currentTimeMillis()+""+new Random().nextInt(99999999));
+                    statement.setString(2, id);
+                    statement.setString(3, item.getId());
+                    statement.setString(4, item.getKodeKategori());
+                    statement.setString(5, item.getNama());
+                    statement.setInt(6, item.getHarga());
+                    statement.setInt(7, item.getJumlah());
+                    statement.setInt(8, item.getTotalharga());
 
-                    if(x.equals(Global_share_variable.getCart().size())){
-                        error_template.success("Info", "data berhasil disimpan");
-                        btnSImpan.setDisable(true);
-                        btnCetakStruk.setDisable(false);
+                    int rs = statement.executeUpdate();
+                    if (rs > 0){
+                        index.getAndIncrement();
+                        Integer x = Integer.parseInt(String.valueOf(index));
+
+                        if(x.equals(Global_share_variable.getCart().size())){
+                            error_template.success("Info", "data berhasil disimpan");
+                            btnSImpan.setDisable(true);
+                            btnCetakStruk.setDisable(false);
+
+                        }
+                    }else{
+                        error_template.warning("Peringatan", "gagal disimpan, cob lagi");
+                        btnSImpan.setDisable(false);
+
+                        connection.rollback();
+                    }
+
+                }catch (Exception e){
+                    btnSImpan.setDisable(false);
+                    try {
+                        connection.rollback();
+                    } catch (SQLException ex) {
+                        error_template.error(ex);
 
                     }
-                }else{
-                    error_template.warning("Peringatan", "gagal disimpan, cob lagi");
-                    btnSImpan.setDisable(false);
                 }
+            });
 
-            }catch (Exception e){
-                error_template.error(e);
-                btnSImpan.setDisable(false);
-            }
-        });
+            connection.commit();
+            connection.setAutoCommit(true);
+        }catch (Exception e){
+        }
+
 
 
     }
-
 
     @FXML
     void onBayarTunai(KeyEvent event) {
@@ -234,7 +262,6 @@ public class Controller_pembayaran implements Initializable {
 
     }
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -257,12 +284,44 @@ public class Controller_pembayaran implements Initializable {
             totalBelanja.setDisable(true);
         }
 
-        jatuhTempo.setValue(LocalDate.now());
         btnCetakStruk.setDisable(true);
 
         Platform.runLater(()->{
             bayartunai.requestFocus();
+            jatuhTempo.setValue(LocalDate.now());
+            checkPembayaran();
+
         });
+    }
+
+    void checkPembayaran(){
+        String idpenjualan = "PJL-"+ Global_share_variable.getIdPenjualan();
+
+        try {
+            String sql = "SELECT * FROM penjualan WHERE id_penjualan = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, idpenjualan);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()){
+                btnCetakStruk.setDisable(false);
+                btnSImpan.setDisable(true);
+
+                Boolean a = rs.getBoolean("cara_pembayaran");
+                String pembayaran = "tunai";
+                if (!a){
+                    pembayaran = "angsuran";
+                }
+
+                caraPembayaran.getSelectionModel().select(pembayaran);
+                bayartunai.setText(String.valueOf(rs.getInt("jumlah_terbayar")));
+
+            }
+        }catch (Exception e){
+            error_template.error(e);
+            e.printStackTrace();
+        }
+
     }
 
 }

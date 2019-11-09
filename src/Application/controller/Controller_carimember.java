@@ -27,9 +27,12 @@ public class Controller_carimember implements Initializable {
     private static Error_template error_template = new Error_template();
 
     Controller_main controller_main;
+    Controller_piutang controller_piutang;
 
-    public Controller_carimember(Controller_main cmain) {
+    public Controller_carimember(Controller_main cmain, Controller_piutang cp) {
         controller_main = cmain;
+        controller_piutang = cp;
+        System.out.println(controller_piutang);
     }
 
     @FXML
@@ -146,7 +149,13 @@ public class Controller_carimember implements Initializable {
                                     btn.setOnAction(event -> {
                                         Model_member member = getTableView().getItems().get(getIndex());
 
-                                        controller_main.setKodePelanggan(member.getId());
+                                        if(controller_main != null){
+                                            controller_main.setKodePelanggan(member.getId());
+                                        }
+                                        if(controller_piutang != null){
+                                            controller_piutang.setKodePelanggan(member.getId());
+                                            controller_piutang.tampilkanDataMember.requestFocus();
+                                        }
                                         Stage stage = (Stage) btn.getScene().getWindow();
                                         stage.close();
                                     });

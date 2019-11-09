@@ -4,6 +4,7 @@ import Application.conectify.ConnectionClass;
 import Application.libs.Error_template;
 import Application.model.Model_member;
 import Application.model.Model_pembayaran;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -68,7 +69,7 @@ public class Controller_piutang implements Initializable {
     private TableColumn<Model_pembayaran,Button> action;
 
     @FXML
-    private TextField tampilkanDataMember;
+    public TextField tampilkanDataMember;
 
 
     @FXML
@@ -79,8 +80,13 @@ public class Controller_piutang implements Initializable {
     @FXML
     void doTampilkanDataMember(ActionEvent event) {
         String id = tampilkanDataMember.getText();
-        generateTable();
-        genarateData("MBR-"+id);
+        if(id.equals(null)){
+            error_template.success("Pemberitahuan", "silakan isi kolom id member");
+        }else{
+            System.out.println(id);
+            generateTable();
+            genarateData("MBR-"+id);
+        }
     }
 
     @FXML
@@ -89,13 +95,13 @@ public class Controller_piutang implements Initializable {
         if(x){
             String id = tampilkanDataMember.getText();
             generateTable();
-            genarateData("MBR-"+id);
+            genarateData("MTR-"+id);
         }
     }
 
     @FXML
     void doCariMember(ActionEvent event) {
-
+        doOpenCariMember();
     }
 
     @FXML
@@ -105,9 +111,44 @@ public class Controller_piutang implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(()->{
+            tampilkanDataMember.requestFocus();
+        });
     }
 
-    void generateTable(){
+    public void doOpenCariMember(){
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/Application/view/carimember.fxml"));
+            Controller_carimember controller_carimember = new Controller_carimember(null,this);
+            fxmlLoader.setController(controller_carimember);
+            Scene scene = new Scene(fxmlLoader.load(), 700, 600);
+            Stage stage = new Stage();
+            stage.setTitle("New Window");
+            stage.setScene(scene);
+            if (!stage.isShowing()){
+                stage.show();
+            }else{
+                error_template.success("Pemberitahuan", "form cari brang sudah tampil");
+            }
+
+            stage.setOnHidden(event1 -> {
+            });
+
+            stage.addEventFilter(KeyEvent.KEY_PRESSED, e ->{
+                switch (e.getCode()){
+                    case ESCAPE:
+                        stage.close();
+                        break;
+
+                }
+            });
+        }catch (Exception e){
+            error_template.error(e);
+        }
+    }
+
+    public void generateTable(){
         faktur.setCellValueFactory(new PropertyValueFactory<>("faktur"));
         terbayar.setCellValueFactory(new PropertyValueFactory<>("jumlah_terbayar"));
         totalBelanja.setCellValueFactory(new PropertyValueFactory<>("total_pembelian"));
@@ -117,15 +158,16 @@ public class Controller_piutang implements Initializable {
         createaBtnTableView("proses");
     }
 
-    void genarateData(String member_id){
+    public void genarateData(String member_id){
         ObservableList<Model_pembayaran> data = FXCollections.observableArrayList();
 
         try {
-            String sql = "SELECT * FROM penjualan WHERE id_member = ?";
+            String sql = "SELECT * FROM penjualan WHERE id_member = ? AND cara_pembayaran = 0";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, member_id);
 
             ResultSet rs = statement.executeQuery();
+            System.out.println(rs);
 
             int index = 1;
             while (rs.next()){
@@ -141,9 +183,12 @@ public class Controller_piutang implements Initializable {
                         rs.getBoolean("cara_pembayaran"),
                         new Button("proses")
                 ));
+                System.out.println(rs);
             }
 
             tableBrang.setItems(data);
+
+            textCari.requestFocus();
 
 
             FilteredList<Model_pembayaran> filteredList = new FilteredList<>(data, b -> true);
@@ -215,7 +260,7 @@ public class Controller_piutang implements Initializable {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource("/Application/view/pelunasan.fxml"));
-            Controller_pelunasan pelunasan = new Controller_pelunasan(pembayaran);
+            Controller_pelunasan pelunasan = new Controller_pelunasan(pembayaran, this);
             fxmlLoader.setController(pelunasan);
             Scene scene = new Scene(fxmlLoader.load(), 600, 600);
             Stage stage = new Stage();
@@ -241,5 +286,10 @@ public class Controller_piutang implements Initializable {
             error_template.error(e);
             e.printStackTrace();
         }
+    }
+
+    public void setKodePelanggan(String id){
+        String numberid = id.split("-")[1];
+        tampilkanDataMember.setText(numberid);
     }
 }

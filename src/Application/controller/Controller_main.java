@@ -4,11 +4,10 @@ import Application.conectify.ConnectionClass;
 import Application.libs.Error_template;
 import Application.libs.Global_share_variable;
 import Application.model.Model_cart_barang;
-import Application.model.Share_variable;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -46,6 +46,9 @@ public class Controller_main implements Initializable {
     private TextField noTransaksi;
 
     @FXML
+    private AnchorPane mainAnchorpane;
+
+    @FXML
     private DatePicker tangglBeli;
 
     @FXML
@@ -67,7 +70,7 @@ public class Controller_main implements Initializable {
     private Button btnMember;
 
     @FXML
-    private Button btnSimpan;
+    private Button btnAngsuran;
 
     @FXML
     private Button btnBaru;
@@ -121,39 +124,12 @@ public class Controller_main implements Initializable {
 
     @FXML
     void doCariMember(ActionEvent event) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("/Application/view/carimember.fxml"));
-            Controller_carimember controller_carimember = new Controller_carimember(this);
-            fxmlLoader.setController(controller_carimember);
-            Scene scene = new Scene(fxmlLoader.load(), 700, 600);
-            Stage stage = new Stage();
-            stage.setTitle("New Window");
-            stage.setScene(scene);
-            if (!stage.isShowing()){
-                stage.show();
-            }else{
-                error_template.success("Pemberitahuan", "form cari brang sudah tampil");
-            }
-
-            stage.setOnHidden(event1 -> {
-            });
-
-            stage.addEventFilter(KeyEvent.KEY_PRESSED, e ->{
-                switch (e.getCode()){
-                    case ESCAPE:
-                        stage.close();
-                        break;
-                }
-            });
-        }catch (Exception e){
-            error_template.error(e);
-        }
+        openCariMemebr();
     }
 
     @FXML
-    void doSimpanTransaksi(ActionEvent event) {
-
+    void doAngsuran(ActionEvent event) {
+        openFormPiutang();
     }
 
     @FXML
@@ -198,6 +174,37 @@ public class Controller_main implements Initializable {
             doAddtoChart();
         }else{
             error_template.warning("Peringatan", "kolom jumlah belum diisi");
+        }
+    }
+
+    public void openCariMemebr(){
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/Application/view/carimember.fxml"));
+            Controller_carimember controller_carimember = new Controller_carimember(this, null);
+            fxmlLoader.setController(controller_carimember);
+            Scene scene = new Scene(fxmlLoader.load(), 700, 600);
+            Stage stage = new Stage();
+            stage.setTitle("New Window");
+            stage.setScene(scene);
+            if (!stage.isShowing()){
+                stage.show();
+            }else{
+                error_template.success("Pemberitahuan", "form cari brang sudah tampil");
+            }
+
+            stage.setOnHidden(event1 -> {
+            });
+
+            stage.addEventFilter(KeyEvent.KEY_PRESSED, e ->{
+                switch (e.getCode()){
+                    case ESCAPE:
+                        stage.close();
+                        break;
+                }
+            });
+        }catch (Exception e){
+            error_template.error(e);
         }
     }
 
@@ -265,6 +272,8 @@ public class Controller_main implements Initializable {
                     case ESCAPE:
                         stage.close();
                         break;
+                    case F1:
+                        controller_piutang.doOpenCariMember();
                 }
             });
         }catch (Exception e){
@@ -339,34 +348,41 @@ public class Controller_main implements Initializable {
     }
 
     void doAddtoChart(){
-        jumlahItem.requestFocus();
-        String id = kodeBarang.getText();
+        if (chekcPembayaran()){
+            error_template.warning("Peringatan", "pembeyaran sudah diproses, \n tidak dapat menambah item brang baru \n " +
+                    "silahkan membuat pembayaran baru");
+        }else{
 
-        AtomicReference<Boolean> isItemonCart = new AtomicReference<>(false);
+            jumlahItem.requestFocus();
+            String id = kodeBarang.getText();
 
-        Global_share_variable.getCart().forEach(item ->{
-            if(kodeBarang.getText().equals(item.getKode())){
-                item.setJumlah(item.getJumlah() + Integer.parseInt(jumlahItem.getText()));
-                item.setTotalharga(item.getJumlah() * item.getHarga());
-                isItemonCart.set(true);
-                System.out.println(item.getJumlah());
+            AtomicReference<Boolean> isItemonCart = new AtomicReference<>(false);
 
-                Global_share_variable.updateValueCart(Global_share_variable.getCart().indexOf(item), item);
+            Global_share_variable.getCart().forEach(item ->{
+                if(kodeBarang.getText().equals(item.getKode())){
+                    item.setJumlah(item.getJumlah() + Integer.parseInt(jumlahItem.getText()));
+                    item.setTotalharga(item.getJumlah() * item.getHarga());
+                    isItemonCart.set(true);
+                    System.out.println(item.getJumlah());
+
+                    Global_share_variable.updateValueCart(Global_share_variable.getCart().indexOf(item), item);
+                }
+            });
+
+
+
+            if (!isItemonCart.get()){
+                cariBrarang(id);
             }
-        });
 
+            System.out.println(isItemonCart.get());
+            generateTableData();
 
+            jumlahItem.setText("");
+            kodeBarang.setText("");
+            kodeBarang.requestFocus();
 
-        if (!isItemonCart.get()){
-            cariBrarang(id);
         }
-
-        System.out.println(isItemonCart.get());
-        generateTableData();
-
-        jumlahItem.setText("");
-        kodeBarang.setText("");
-        kodeBarang.requestFocus();
     }
 
     public void cariBrarang(String id){
@@ -501,6 +517,25 @@ public class Controller_main implements Initializable {
         action.setCellFactory(cellFactory);
     }
 
+    boolean chekcPembayaran(){
+        String id = "PJL-"+noTransaksi.getText();
+        Boolean ret = false;
+        try {
+            String sql = "SELECT * FROM penjualan WHERE id_penjualan = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, id);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()){
+                ret = true;
+            }
+        }catch (Exception e){
+            error_template.error(e);
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -523,6 +558,7 @@ public class Controller_main implements Initializable {
                     openFormPembayaran();
                     break;
                 case F3:
+                    openFormPiutang();
                     break;
                 case F4:
                     resetValue();
@@ -531,9 +567,16 @@ public class Controller_main implements Initializable {
                     openFormMember();
                     break;
                 case F6:
-                    openFormPiutang();
+                    openCariMemebr();
                     break;
             }
         });
+        primaryStage.setMaximized(true);
+
+        Platform.runLater(()->{
+            mainAnchorpane.setPrefWidth(primaryStage.getWidth());
+            mainAnchorpane.setPrefHeight(primaryStage.getHeight());
+        });
+
     }
 }

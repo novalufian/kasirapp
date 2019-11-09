@@ -1,6 +1,7 @@
 package Application;
 
 import Application.controller.Controller;
+import Application.controller.Controller_login;
 import Application.controller.Controller_main;
 import Application.controller.Controller_pembayaran;
 import Application.libs.Error_template;
@@ -25,11 +26,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        Controller_main controller_main = new Controller_main(primaryStage);
+        Controller_login controller_login = new Controller_login(primaryStage);
 
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("view/main.fxml"));
-        fxmlLoader.setController(controller_main);
+        fxmlLoader.setLocation(getClass().getResource("view/login.fxml"));
+        fxmlLoader.setController(controller_login);
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 600, 400);
         primaryStage.setScene(scene);
